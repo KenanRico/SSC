@@ -4,14 +4,17 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <unistd.h>
 #include <cstring>
 #include <iostream>
+#include <cstring>
+#include <climits>
 
 
 void getServerInfo(std::string&, int&);
 void getServerInfo(struct hostent*&, struct sockaddr_in&, const std::string&, int);
 bool connectToServer(int, struct sockaddr_in&);
-
+void writeInput(int);
 
 
 int main(){
@@ -31,6 +34,7 @@ int main(){
 	//connect to server and do stuff
 	if(connectToServer(main_socket, serv_addr)){
 		//do some actions
+		writeInput(main_socket);
 	}else{
 		std::cout<<"Failed to connect to server!\n";
 	}
@@ -56,4 +60,12 @@ void getServerInfo(struct hostent*& server, struct sockaddr_in& serv_addr, const
 
 bool connectToServer(int main_socket, struct sockaddr_in& serv_addr){
 	return (connect(main_socket, (struct sockaddr*)&serv_addr, sizeof(serv_addr))>=0);
+}
+
+void writeInput(int socket){
+	std::cout<<"Please specify a message to write to server:\n";
+	std::string msg("");
+	//get user input
+	std::cin>>msg;
+	write(socket, msg.c_str(), 255);
 }

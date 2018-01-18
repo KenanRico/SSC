@@ -90,20 +90,22 @@ void serverLoop(int client_count, int initial_socket){
 		}else{
 			//client limit reached, no longer waiting for new connections
 		}
-		
+		//remove connection from connections once they are done working
+		/*current issue: connection is not removed after connectios.erase(), which results 
+		in some arbitrary pointer (prolly dangling) trying to call Connection::finished()*/
+		for(std::vector<Connection*>::iterator con=connections.begin(); con!=connections.end(); ++con){
+			std::cout<<*con<<"\n";
+			if((*con)->finished()){
+				delete *con;
+				connections.erase(con);
+			}else;
+		}
 	}
 }
 
 void checkNewConnection(int initial_socket){
+	//listen to new connection
 	listen(initial_socket, 5);
-	//create new thread when new connection comes in
-
-
-
-
-	//code below is potentially incorrect
-
-
 	Connection* new_client = new Connection(initial_socket);
 	//the run function creates new thread and enters the main loop of the thread to handle messaging
 	if(new_client->opened()){

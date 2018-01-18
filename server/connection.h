@@ -15,6 +15,7 @@ class Connection{
 			struct sockaddr_in client_addr;
 			socklen_t client_length;
 			int socket;		
+			bool running;
 		} SocketInfo;
 	private:
 		//socket related members
@@ -33,6 +34,7 @@ class Connection{
 
 	public:
 		bool opened() const;
+		bool finished() const;
 		void run();
 	private:
 		static void* connectionHandlingProcedures(void* arg);
