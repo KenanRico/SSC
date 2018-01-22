@@ -14,7 +14,9 @@
 void getServerInfo(std::string&, int&);
 void getServerInfo(struct hostent*&, struct sockaddr_in&, const std::string&, int);
 bool connectToServer(int, struct sockaddr_in&);
+void loop(int);
 void writeInput(int);
+void printMessages(int);
 
 
 int main(){
@@ -34,7 +36,7 @@ int main(){
 	//connect to server and do stuff
 	if(connectToServer(main_socket, serv_addr)){
 		//do some actions
-		writeInput(main_socket);
+		loop(main_socket);
 	}else{
 		std::cout<<"Failed to connect to server!\n";
 	}
@@ -62,10 +64,41 @@ bool connectToServer(int main_socket, struct sockaddr_in& serv_addr){
 	return (connect(main_socket, (struct sockaddr*)&serv_addr, sizeof(serv_addr))>=0);
 }
 
+void loop(int socket){
+	bool running = true;
+	while(running){
+		std::cout<<"What to do (write/print): ";
+		std::string action("");
+		std::cin>>action;
+		write(socket, action.c_str(), 255);
+		if(action=="write"){
+			writeInput(socket);
+		}else if(action=="print"){
+			printMessages(socket);
+		}else{
+			std::cout<<"Unrecognized action!\n";
+			running = false;
+		}
+	}
+}
+
 void writeInput(int socket){
 	std::cout<<"Please specify a message to write to server:\n";
 	std::string msg("");
 	//get user input
 	std::cin>>msg;
 	write(socket, msg.c_str(), 255);
+}
+
+void printMessages(int socket){
+	//printing all messages
+	std::cout<<"Printing all messages:\n";
+	char _data[20];
+	ssize_t N = read(socket, _data, 19);
+	if(N>=0){
+		std::string data(_data);
+		std::cout<<data<<"\n";
+	}else{
+		std::cout<<"Failed to read from server!\n";
+	}
 }

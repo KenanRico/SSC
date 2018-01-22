@@ -38,6 +38,8 @@ class Connection{
 		void run();
 	private:
 		static void* connectionHandlingProcedures(void* arg);
+		static void action_ReadFromClient(int);
+		static void action_PrintToClient(int);
 };
 
 #endif

@@ -93,12 +93,13 @@ void serverLoop(int client_count, int initial_socket){
 		//remove connection from connections once they are done working
 		/*current issue: connection is not removed after connectios.erase(), which results 
 		in some arbitrary pointer (prolly dangling) trying to call Connection::finished()*/
-		for(std::vector<Connection*>::iterator con=connections.begin(); con!=connections.end(); ++con){
-			std::cout<<*con<<"\n";
-			if((*con)->finished()){
+		for(std::vector<Connection*>::iterator con=connections.begin(); con!=connections.end();){
+			if(!(*con)->finished()){
+				++con;
+			}else{
 				delete *con;
 				connections.erase(con);
-			}else;
+			}
 		}
 	}
 }
