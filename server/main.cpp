@@ -89,6 +89,7 @@ void serverLoop(int client_count, int initial_socket){
 			checkNewConnection(initial_socket);
 		}else{
 			//client limit reached, no longer waiting for new connections
+			//sleep();
 		}
 		//remove connection from connections once they are done working
 		/*current issue: connection is not removed after connectios.erase(), which results 
@@ -112,6 +113,7 @@ void checkNewConnection(int initial_socket){
 	if(new_client->opened()){
 		new_client->run();
 		connections.push_back(new_client);
+		std::cout<<"Currently there are "<<connections.size()<<" connections\n";
 	}else{
 		delete new_client;
 	}

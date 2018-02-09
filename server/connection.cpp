@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <vector>
 #include <string>
+#include <cstring>
 
 
 Connection::Connection(int init_sock){ 
@@ -76,7 +77,8 @@ void Connection::action_ReadFromClient(int socket){
 	ssize_t N = read(socket, data, 255);
 	if(N>=0){
 		std::string msg(data);
-		ServerUtil::msg_pool.push_back(msg);
+		//ServerUtil::msg_pool.push_back(msg);
+		ServerUtil::store(data);
 		ServerUtil::log(ServerUtil::INFO, "Read message successful\n");
 	}else{
 		ServerUtil::log(ServerUtil::ERROR, "Failed to read from client!\n");
@@ -84,13 +86,18 @@ void Connection::action_ReadFromClient(int socket){
 }
 
 void Connection::action_PrintToClient(int socket){
+	std::string data = ServerUtil::print();
+	write(socket, data.c_str(), 255);
+	
 	//do stuff
 	//pour data from vector into string, each entry seperated by '\n'
 	//char data[512];
+	/*
 	std::string data("");
 	for(std::vector<std::string>::iterator iter=ServerUtil::msg_pool.begin(); iter!=ServerUtil::msg_pool.end(); ++iter){
 		std::string msg(*iter);
 		data += msg+"\n";
 	}
 	write(socket, data.c_str(), 19);
+	*/
 }
